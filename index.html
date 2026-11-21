@@ -207,6 +207,19 @@ figure img,figure video{transition:transform .25s ease,box-shadow .25s ease}
   .route{animation:march 1.6s linear infinite}
   @keyframes march{to{stroke-dashoffset:-16}}
 }
+
+/* Video behaviour */
+figure video{cursor:pointer}
+figure video:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(31,28,23,.16);border-color:var(--acc,var(--gold-fill))}
+.gallery figure.playing{grid-column:1/-1}
+.gallery figure.playing video{object-fit:contain;background:#0d0c0a;max-height:80vh;transform:none;box-shadow:0 18px 44px rgba(31,28,23,.25);border-color:var(--acc,var(--gold-fill))}
+.hl-grid.touring{grid-template-columns:minmax(0,1fr)}
+.hl-grid.touring .facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.hl-grid.touring .facts .actions{grid-column:1/-1}
+@media (max-width:720px){.hl-grid.touring .facts{grid-template-columns:minmax(0,1fr)}}
+.tour-close{position:absolute;top:10px;right:10px;z-index:2;font:500 13px var(--body);color:#f5f1e8;background:rgba(13,12,10,.72);border:1px solid rgba(245,241,232,.25);border-radius:999px;padding:6px 12px;cursor:pointer}
+.tour-close:hover{background:rgba(13,12,10,.9)}
+::view-transition-group(*){animation-duration:.45s;animation-timing-function:cubic-bezier(.4,0,.2,1)}
 </style>
 
 <div class="curtain" aria-hidden="true">
@@ -240,7 +253,7 @@ figure img,figure video{transition:transform .25s ease,box-shadow .25s ease}
       <p class="mono">New York · UN Secretariat, Department of Operational Support · Jul–Sep 2026</p>
       <h2>Self-built online workshops and tools</h2>
     </div>
-    <div class="hl-grid">
+    <div class="hl-grid" id="hl-grid">
       <figure class="tour">
         <div class="tour-frame" id="tour">
           <button type="button" class="tour-start" id="tour-start" aria-label="Play the 70-second tour">
@@ -396,16 +409,63 @@ document.getElementById("ny-gallery").innerHTML = [
   { img: "assets/new-york/prioritise.webp", cap: "Prioritising learning formats" }
 ].map(mediaHtml).join("");
 
+/* Smooth size changes: the browser morphs the element from its old to its new size where supported. */
+function morph(els, change){
+  var rm = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!document.startViewTransition || rm) { change(); return Promise.resolve(); }
+  var done = false;
+  var once = function(){ if (!done) { done = true; change(); } };
+  setTimeout(once, 700); /* safety net: the change always happens, even if the browser skips the morph */
+  els.forEach(function(el, i){ el.style.viewTransitionName = "vt-" + i; });
+  var vt = document.startViewTransition(once);
+  return vt.finished.catch(function(){}).then(function(){ els.forEach(function(el){ el.style.viewTransitionName = ""; }); });
+}
+
+/* New York tour: opens wide while it plays, closes back into its place. */
 var tourEl = document.getElementById("tour");
+var hlGrid = document.getElementById("hl-grid");
+var hlFacts = hlGrid.querySelector(".facts");
+var tourIdle = tourEl.innerHTML;
 function fitTour(){
   var f = tourEl.querySelector("iframe");
   if (f) f.style.transform = "scale(" + (tourEl.clientWidth / 1280) + ")";
 }
-document.getElementById("tour-start").addEventListener("click", function(){
-  tourEl.innerHTML = '<iframe title="Workshop tools tour" src="demo/index.html?autoplay=1&theme=dark&notes=0"></iframe>';
-  fitTour();
+if (window.ResizeObserver) new ResizeObserver(fitTour).observe(tourEl); else window.addEventListener("resize", fitTour);
+tourEl.addEventListener("click", function(e){
+  if (e.target.closest("#tour-start")) {
+    morph([tourEl, hlFacts], function(){
+      hlGrid.classList.add("touring");
+      tourEl.innerHTML = '<iframe title="Workshop tools tour" src="demo/index.html?autoplay=1&theme=dark&notes=0"></iframe>' +
+        '<button type="button" class="tour-close" aria-label="Close the tour">Close tour ×</button>';
+      fitTour();
+    }).then(function(){ tourEl.scrollIntoView({ block: "nearest", behavior: "smooth" }); });
+  } else if (e.target.closest(".tour-close")) {
+    morph([tourEl, hlFacts], function(){
+      hlGrid.classList.remove("touring");
+      tourEl.innerHTML = tourIdle;
+    });
+  }
 });
-window.addEventListener("resize", fitTour);
+
+/* Station videos: grow to full width while playing, shrink again on pause or end. */
+var shrinkTimer = null;
+document.addEventListener("play", function(e){
+  var v = e.target; if (!(v instanceof HTMLVideoElement)) return;
+  clearTimeout(shrinkTimer);
+  document.querySelectorAll("#panel video").forEach(function(o){ if (o !== v && !o.paused) o.pause(); });
+  var fig = v.closest("figure"); if (!fig || fig.classList.contains("playing")) return;
+  morph([fig], function(){ fig.classList.add("playing"); })
+    .then(function(){ fig.scrollIntoView({ block: "nearest", behavior: "smooth" }); });
+}, true);
+document.addEventListener("pause", function(e){
+  var v = e.target; if (!(v instanceof HTMLVideoElement)) return;
+  clearTimeout(shrinkTimer);
+  shrinkTimer = setTimeout(function(){
+    if (!v.paused || v.seeking) return;
+    var fig = v.closest("figure"); if (!fig || !fig.classList.contains("playing")) return;
+    morph([fig], function(){ fig.classList.remove("playing"); });
+  }, 300);
+}, true);
 
 var lb = document.getElementById("lightbox");
 document.addEventListener("click", function(e){
