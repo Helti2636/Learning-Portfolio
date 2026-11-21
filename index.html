@@ -219,6 +219,13 @@ figure video:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(31,28,
 @media (max-width:720px){.hl-grid.touring .facts{grid-template-columns:minmax(0,1fr)}}
 .tour-close{position:absolute;top:10px;right:10px;z-index:2;font:500 13px var(--body);color:#f5f1e8;background:rgba(13,12,10,.72);border:1px solid rgba(245,241,232,.25);border-radius:999px;padding:6px 12px;cursor:pointer}
 .tour-close:hover{background:rgba(13,12,10,.9)}
+.tour-shield{position:absolute;inset:0;z-index:1;border:0;padding:0;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.tour-icon{display:none;width:68px;height:68px;border-radius:50%;background:rgba(13,12,10,.62);color:#f5f1e8;align-items:center;justify-content:center;transition:opacity .2s ease}
+.tour-icon svg{width:30px;height:30px}
+.tour-shield:hover .tour-icon.pause,.tour-shield:focus-visible .tour-icon.pause{display:flex}
+.paused .tour-shield{background:rgba(13,12,10,.28)}
+.paused .tour-shield .tour-icon.pause{display:none}
+.paused .tour-shield .tour-icon.play{display:flex}
 ::view-transition-group(*){animation-duration:.45s;animation-timing-function:cubic-bezier(.4,0,.2,1)}
 </style>
 
@@ -435,10 +442,22 @@ tourEl.addEventListener("click", function(e){
   if (e.target.closest("#tour-start")) {
     morph([tourEl, hlFacts], function(){
       hlGrid.classList.add("touring");
-      tourEl.innerHTML = '<iframe title="Workshop tools tour" src="demo/index.html?autoplay=1&theme=dark&notes=0"></iframe>' +
+      tourEl.classList.remove("paused");
+      tourEl.innerHTML = '<iframe title="Workshop tools tour" tabindex="-1" src="demo/index.html?autoplay=1&theme=dark&notes=0"></iframe>' +
+        '<button type="button" class="tour-shield" aria-label="Pause the tour">' +
+          '<span class="tour-icon pause" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor"/></svg></span>' +
+          '<span class="tour-icon play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></span>' +
+        '</button>' +
         '<button type="button" class="tour-close" aria-label="Close the tour">Close tour ×</button>';
       fitTour();
     }).then(function(){ tourEl.scrollIntoView({ block: "nearest", behavior: "smooth" }); });
+  } else if (e.target.closest(".tour-shield")) {
+    /* The tour is watched like a video: a click pauses or resumes it, nothing inside can be clicked. */
+    var f = tourEl.querySelector("iframe");
+    var pause = !tourEl.classList.contains("paused");
+    tourEl.classList.toggle("paused", pause);
+    e.target.closest(".tour-shield").setAttribute("aria-label", pause ? "Resume the tour" : "Pause the tour");
+    if (f && f.contentWindow) f.contentWindow.postMessage({ tour: pause ? "pause" : "play" }, "*");
   } else if (e.target.closest(".tour-close")) {
     morph([tourEl, hlFacts], function(){
       hlGrid.classList.remove("touring");
@@ -451,6 +470,7 @@ tourEl.addEventListener("click", function(e){
 var shrinkTimer = null;
 document.addEventListener("play", function(e){
   var v = e.target; if (!(v instanceof HTMLVideoElement)) return;
+  if (!v.dataset.volumeSet) { v.volume = 0.5; v.dataset.volumeSet = "1"; } /* start at half volume; later changes by the visitor stay */
   clearTimeout(shrinkTimer);
   document.querySelectorAll("#panel video").forEach(function(o){ if (o !== v && !o.paused) o.pause(); });
   var fig = v.closest("figure"); if (!fig || fig.classList.contains("playing")) return;
