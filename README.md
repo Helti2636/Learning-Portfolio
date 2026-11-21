@@ -4,7 +4,7 @@ Four stations, four learning products: a master's thesis on e-learning
 (Friedrichshafen), two e-learnings for the City of Graz, a JPO playbook and
 digital book shelf (Turin) and self-built online workshop tools (New York).
 
-**Live:** https://helti2636.github.io/learning-portfolio/
+**Live:** https://helti2636.github.io/Learning-Portfolio/
 
 ## How it is built
 
