@@ -1,0 +1,526 @@
+<title>Robin Held Learning Portfolio</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: one scrolling page. Off-white paper, warm near-black for the New York band and the opening curtain, gold for every station. Single light look on purpose. */
+:root{
+  --bg:#f5f1e8; --surface:#fcfaf5; --ink:#1f1c17; --muted:#6b6458; --line:#ddd5c5;
+  --gold:#8a6516; --gold-fill:#c19a4f; --gold-soft:#efe4cc;
+  --ocean:#ece6d8; --land:#d3c9b4; --coast:#ece6d8;
+  --hl-bg:#e8dcc4; --hl-ink:#1f1c17; --hl-muted:#6e6250; --hl-line:#cbb994; --hl-gold:#86611a; --hl-tile:#f3ebdb;
+  --turin:#66783a; --turin-soft:#e9ecd6; --graz:#a4533e; --graz-soft:#f4e2da; --fh:#3e6475; --fh-soft:#dee8eb; --ny:#a37a2c; --ny-soft:#f3ebdb;
+  --display:"Bricolage Grotesque","Avenir Next","Segoe UI",sans-serif;
+  --body:"IBM Plex Sans","Helvetica Neue",Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;
+  padding-block:28px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.page{max-width:1040px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;line-height:1.15}
+p{margin:0}
+.mono{font-family:var(--mono);font-size:12.5px;letter-spacing:.02em;color:var(--muted)}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--gold-fill);outline-offset:3px;border-radius:4px}
+
+.proto{font-family:var(--mono);font-size:12.5px;color:var(--muted);border:1px dashed var(--line);border-radius:8px;padding:8px 12px}
+
+.top{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap}
+.top h1{font-size:clamp(30px,5vw,46px);font-weight:700;letter-spacing:-.01em}
+.top p{color:var(--muted);max-width:46ch;margin-top:6px}
+.btn{font-family:var(--body);font-size:15px;font-weight:500;border-radius:999px;padding:10px 20px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--ink);background:var(--ink);color:var(--bg)}
+.btn:hover{opacity:.88}
+.btn.gold{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.btn.line{background:transparent;color:var(--hl-ink);border-color:var(--hl-line)}
+
+.mapwrap{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--ocean)}
+#map{display:block;width:100%;height:auto}
+.land{fill:var(--land)}
+.borders{fill:none;stroke:var(--coast);stroke-width:.6}
+.inset-bg{fill:var(--ocean);stroke:var(--gold-fill);stroke-width:1.2}
+.inset-box{fill:none;stroke:var(--gold-fill);stroke-width:1.2}
+.leader{stroke:var(--gold-fill);stroke-width:.8;opacity:.7}
+.route{fill:none;stroke:var(--gold-fill);stroke-width:1.6;stroke-dasharray:2 6;stroke-linecap:round}
+.stop{cursor:pointer}
+.stop .dot{fill:var(--gold-fill);stroke:var(--surface);stroke-width:2.5}
+.stop .leader{stroke:var(--ink);stroke-width:.8;opacity:.45}
+.stop text{font-family:var(--display);font-size:15px;font-weight:700;fill:var(--ink);paint-order:stroke;stroke:var(--ocean);stroke-width:4px;stroke-linejoin:round}
+.stop:hover .dot,.stop:focus-visible .dot{stroke:var(--ink);stroke-width:2.5}
+.stop:hover text,.stop:focus-visible text{fill:var(--gold)}
+.stop:focus-visible{outline:none}
+.cap{font-family:var(--mono);font-size:11px;fill:var(--muted)}
+
+.line-nav{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.line-nav button{font:inherit;color:inherit;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;cursor:pointer;display:flex;flex-direction:column;gap:2px;min-width:0}
+.line-nav button:hover{border-color:var(--muted)}
+.line-nav strong{font-family:var(--display);font-size:17px;font-weight:700}
+.line-nav span.what{font-size:14px;color:var(--muted)}
+.line-nav button.hl{border-color:var(--gold-fill);background:var(--gold-soft)}
+.line-nav button.hl .mono{color:var(--gold)}
+
+.hl-band{background:var(--hl-bg);color:var(--hl-ink);border-radius:16px;padding:clamp(20px,4vw,36px);display:flex;flex-direction:column;gap:22px;scroll-margin-top:16px}
+.hl-band .mono{color:var(--hl-muted)}
+.badge{align-self:flex-start;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--hl-gold);border:1px solid var(--hl-gold);border-radius:999px;padding:3px 12px}
+.hl-band h2{font-size:clamp(26px,4vw,38px);font-weight:700;max-width:20ch}
+.hl-grid{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:24px}
+@media (max-width:720px){.hl-grid{grid-template-columns:minmax(0,1fr)}}
+.facts{display:flex;flex-direction:column;gap:14px;min-width:0}
+.facts dt{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--hl-gold)}
+.facts dd{margin:2px 0 0;color:var(--hl-ink)}
+dl{margin:0}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+.ph{border:1.5px dashed var(--line);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;padding:12px;font-family:var(--mono);font-size:12.5px;color:var(--muted);min-width:0}
+.hl-band .ph{border-color:var(--hl-line);background:var(--hl-tile);color:var(--hl-muted)}
+.ph.video{aspect-ratio:16/9;max-width:100%}
+.ph.shot{aspect-ratio:16/10;max-width:100%}
+.shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.tags{display:flex;gap:8px;flex-wrap:wrap}
+.tags span{font-size:13px;border:1px solid var(--line);border-radius:999px;padding:2px 12px;color:var(--muted)}
+.hl-band .tags span{border-color:var(--hl-line);color:var(--hl-muted)}
+
+.more h2{font-size:22px;font-weight:700}
+.more{display:flex;flex-direction:column;gap:14px;scroll-margin-top:16px}
+.tabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.tabs button{font:inherit;color:inherit;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;cursor:pointer;display:flex;flex-direction:column;gap:2px;min-width:0}
+.tabs button strong{font-family:var(--display);font-size:19px;font-weight:700}
+.tabs button span.what{color:var(--muted);font-size:15px}
+.tabs button[aria-selected="true"]{border-color:var(--ink);box-shadow:inset 0 -3px 0 var(--gold-fill)}
+.tabs button:hover{border-color:var(--muted)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:clamp(18px,3vw,28px);display:flex;flex-direction:column;gap:18px}
+.panel h3{font-size:24px;font-weight:700}
+.panel .facts dt{color:var(--gold)}
+.panel .facts dd{color:var(--ink)}
+.panel-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px}
+@media (max-width:720px){.panel-grid{grid-template-columns:minmax(0,1fr)}}
+.draft{color:var(--muted);font-style:italic}
+.tour-frame{position:relative;width:100%;aspect-ratio:16/9;max-width:100%;overflow:hidden;border-radius:10px;border:1px solid var(--hl-line);background:#1a1512}
+.tour-frame iframe{position:absolute;top:0;left:0;width:1280px;height:720px;border:0;transform-origin:0 0}
+.tour-start{position:absolute;inset:0;padding:0;border:0;background:none;cursor:pointer;display:block}
+.tour-start img{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.55)}
+.tour-play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:inline-flex;align-items:center;gap:10px;background:#d4b06a;color:#1f1c17;font-weight:600;font-size:15px;border-radius:999px;padding:12px 22px;white-space:nowrap;box-shadow:0 6px 24px rgba(0,0,0,.35)}
+.tour-start:hover .tour-play{filter:brightness(1.08)}
+.hl-band figcaption{color:var(--hl-muted)}
+.hl-band figure img{border-color:var(--hl-line)}
+.facts.row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+@media (max-width:720px){.facts.row{grid-template-columns:minmax(0,1fr)}}
+.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.gallery.one{grid-template-columns:minmax(0,560px)}
+figure{margin:0;display:flex;flex-direction:column;gap:6px;min-width:0}
+figcaption{font-size:13.5px;color:var(--muted)}
+figure img,figure video{display:block;width:100%;max-width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:8px;border:1px solid var(--line);background:var(--ocean)}
+.zoom{padding:0;border:0;background:none;cursor:zoom-in;display:block;width:100%}
+.zoom:hover img{border-color:var(--gold-fill)}
+.chart{width:100%;height:auto;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.chart .grid{stroke:var(--line);stroke-width:1}
+.chart .axis{font-family:var(--mono);font-size:11px;fill:var(--muted)}
+.chart .val{font-family:var(--body);font-size:13px;font-weight:600;fill:var(--ink)}
+.chart .bar.before{fill:var(--land)}
+.chart .bar.after{fill:var(--gold-fill)}
+.abstract{border-top:1px solid var(--line);padding-top:12px}
+.abstract summary{cursor:pointer;font-weight:600}
+.abstract p{margin-top:8px;max-width:72ch;color:var(--muted)}
+.panel .actions .btn{background:transparent;color:var(--ink);border-color:var(--ink)}
+.panel .actions .btn:hover{background:var(--ink);color:var(--bg);opacity:1}
+#lightbox{border:0;padding:12px;border-radius:12px;background:var(--surface);color:var(--ink);max-width:min(1100px,94vw)}
+#lightbox::backdrop{background:rgba(6,10,20,.78)}
+#lightbox img{display:block;max-width:100%;max-height:78vh;border-radius:8px}
+#lightbox p{margin-top:8px}
+.lb-close{position:absolute;top:6px;right:10px;font-size:26px;line-height:1;border:0;background:var(--surface);color:var(--ink);border-radius:50%;width:36px;height:36px;cursor:pointer}
+.xref{font-size:15px}
+.xref button{font:inherit;color:var(--gold);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+
+footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:16px;font-size:13.5px;color:var(--muted)}
+@media (prefers-reduced-motion:no-preference){
+  html{scroll-behavior:smooth}
+  .curtain{animation:curtain-out 0s linear 3.3s forwards}
+  .curtain-word{animation:word-in .8s ease-out .1s both}
+  .curtain-half.bottom .curtain-word{animation-delay:.35s}
+  .seam-line{animation:seam-draw 1.4s cubic-bezier(.45,0,.25,1) .8s both, seam-fade .3s ease 2.25s forwards}
+  .seam-plane{animation:seam-fly 1.4s cubic-bezier(.45,0,.25,1) .8s both, seam-fade .2s ease 2.15s forwards}
+  .curtain-half.top{animation:open-up 1s cubic-bezier(.7,0,.2,1) 2.25s forwards}
+  .curtain-half.bottom{animation:open-down 1s cubic-bezier(.7,0,.2,1) 2.25s forwards}
+  @keyframes word-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  @keyframes seam-draw{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+  @keyframes seam-fly{from{left:-30px}to{left:calc(100% + 10px)}}
+  @keyframes seam-fade{to{opacity:0}}
+  @keyframes open-up{to{transform:translateY(-100%)}}
+  @keyframes open-down{to{transform:translateY(100%)}}
+  @keyframes curtain-out{to{visibility:hidden}}
+}
+@media (prefers-reduced-motion:reduce){ .curtain{display:none} }
+.curtain{position:fixed;inset:0;z-index:100;pointer-events:none}
+.curtain-half{position:absolute;left:0;right:0;height:50%;overflow:hidden;background:#0d0c0a}
+.curtain-half.top{top:0}
+.curtain-half.bottom{bottom:0}
+.curtain-inner{position:absolute;left:0;right:0;top:0;bottom:0;display:flex;justify-content:center;padding:0 24px}
+.curtain-half.top .curtain-inner{align-items:flex-end;padding-bottom:clamp(16px,2.6vh,26px)}
+.curtain-half.bottom .curtain-inner{align-items:flex-start;padding-top:clamp(16px,2.6vh,26px)}
+.curtain-word{font-family:var(--display);font-size:clamp(30px,6vw,64px);line-height:1;letter-spacing:.01em;text-align:center}
+.curtain-half.top .curtain-word{color:#f5f1e8;font-weight:700}
+.curtain-half.bottom .curtain-word{color:#d4b06a;font-weight:500}
+.curtain-seam{position:absolute;left:0;right:0;top:50%;height:0;z-index:2}
+.seam-line{position:absolute;left:0;right:0;top:-1px;border-top:2px dotted #d4b06a}
+.seam-plane{position:absolute;top:-11px;width:22px;height:22px;color:#d4b06a}
+.seam-plane svg{width:100%;height:100%;display:block}
+.map-plane{color:var(--ink);pointer-events:none}
+
+.hl-gallery{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:760px){.hl-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* Station colours, picked from each station's own material */
+.st-turin{--acc:var(--turin);--acc-soft:var(--turin-soft)}
+.st-graz{--acc:var(--graz);--acc-soft:var(--graz-soft)}
+.st-fh{--acc:var(--fh);--acc-soft:var(--fh-soft)}
+.hl-band{--acc:var(--ny);--acc-soft:var(--ny-soft)}
+.tabs button{position:relative;overflow:hidden;transition:transform .2s ease,border-color .2s ease,background .2s ease}
+.tabs button::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:var(--acc);transform:scaleX(.18);transform-origin:left;transition:transform .35s ease}
+.tabs button .mono{color:var(--acc)}
+.tabs button:hover{transform:translateY(-3px);border-color:var(--acc)}
+.tabs button:hover::before{transform:scaleX(.45)}
+.tabs button[aria-selected="true"]{background:var(--acc-soft);border-color:var(--acc);box-shadow:none}
+.tabs button[aria-selected="true"]::before{transform:scaleX(1)}
+.panel{border-top:4px solid var(--acc);border-color:color-mix(in srgb,var(--acc) 35%,var(--line));border-top-color:var(--acc);background:var(--surface);box-shadow:inset 0 0 80px 28px color-mix(in srgb,var(--acc) 22%,var(--surface))}
+.panel .mono{color:var(--acc)}
+.panel h3{color:var(--ink)}
+.facts.row > div,.hl-band .facts > div:not(.actions){background:var(--surface);border:1px solid color-mix(in srgb,var(--acc) 28%,transparent);border-left:4px solid var(--acc);border-radius:0 10px 10px 0;padding:12px 14px}
+.hl-band .facts > div:not(.actions){background:var(--hl-tile)}
+.panel .facts dt,.hl-band .facts dt{color:var(--acc)}
+.panel .tags span{border-color:color-mix(in srgb,var(--acc) 40%,transparent);color:var(--acc);background:var(--surface)}
+.panel .actions .btn{color:var(--acc);border-color:var(--acc)}
+.panel .actions .btn:hover{background:var(--acc);color:var(--surface)}
+.xref button{color:var(--acc)}
+.chart .bar.after{fill:var(--acc,var(--gold-fill))}
+figure img,figure video{transition:transform .25s ease,box-shadow .25s ease}
+.zoom:hover img{transform:translateY(-3px);box-shadow:0 10px 24px rgba(31,28,23,.16);border-color:var(--acc,var(--gold-fill))}
+.hl-band .tour-frame{border-color:var(--hl-line);box-shadow:0 14px 40px rgba(31,28,23,.22)}
+.line-nav button{transition:transform .2s ease,border-color .2s ease}
+.line-nav button:hover{transform:translateY(-3px)}
+@media (prefers-reduced-motion:no-preference){
+  .panel.enter > *{animation:rise .45s ease both}
+  .panel.enter > *:nth-child(2){animation-delay:.06s}
+  .panel.enter > *:nth-child(3){animation-delay:.12s}
+  .panel.enter > *:nth-child(n+4){animation-delay:.18s}
+  .panel.enter .facts.row > div{animation:rise .45s ease both}
+  .panel.enter .facts.row > div:nth-child(2){animation-delay:.1s}
+  .panel.enter .facts.row > div:nth-child(3){animation-delay:.2s}
+  @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .route{animation:march 1.6s linear infinite}
+  @keyframes march{to{stroke-dashoffset:-16}}
+}
+</style>
+
+<div class="curtain" aria-hidden="true">
+  <div class="curtain-half top"><div class="curtain-inner"><div class="curtain-word">Learning Portfolio</div></div></div>
+  <div class="curtain-half bottom"><div class="curtain-inner"><div class="curtain-word">Robin Held</div></div></div>
+  <div class="curtain-seam"><div class="seam-line"></div><div class="seam-plane"><svg viewBox="0 0 24 24" aria-hidden="true"><path transform="rotate(90 12 12)" d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z" fill="currentColor"/></svg></div></div>
+</div>
+
+<div class="page">
+
+  <header class="top">
+    <div>
+      <h1>Robin Held</h1>
+      <p>Learning portfolio. My work in learning and development, from my master's thesis to online workshops I built myself.</p>
+    </div>
+    <button class="btn" type="button" data-go="new-york">See the highlight</button>
+  </header>
+
+  <div class="mapwrap"><svg id="map" role="group" aria-label="Map of the four stations"></svg></div>
+
+  <nav class="line-nav" aria-label="Stations in order">
+    <button type="button" data-go="friedrichshafen"><span class="mono">2023–2025</span><strong>Friedrichshafen</strong><span class="what">Master's thesis</span></button>
+    <button type="button" data-go="graz"><span class="mono">Feb–May 2025</span><strong>Graz</strong><span class="what">E-learnings</span></button>
+    <button type="button" data-go="turin"><span class="mono">Sep–Dec 2025</span><strong>Turin</strong><span class="what">JPO playbook and book shelf</span></button>
+    <button type="button" data-go="new-york" class="hl"><span class="mono">Jul–Sep 2026 · highlight</span><strong>New York</strong><span class="what">Online workshop</span></button>
+  </nav>
+
+  <section class="hl-band" id="new-york">
+    <span class="badge">Highlight</span>
+    <div>
+      <p class="mono">New York · UN Secretariat, Department of Operational Support · Jul–Sep 2026</p>
+      <h2>Self-built online workshops and tools</h2>
+    </div>
+    <div class="hl-grid">
+      <figure class="tour">
+        <div class="tour-frame" id="tour">
+          <button type="button" class="tour-start" id="tour-start" aria-label="Play the 70-second tour">
+            <img src="assets/new-york/reveal.webp" alt="">
+            <span class="tour-play"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>Play the tour · 70 s</span>
+          </button>
+        </div>
+        <figcaption>The tool plays itself, step by step, with captions.</figcaption>
+      </figure>
+      <dl class="facts">
+        <div><dt>Task</dt><dd>Turn an existing in-person workshop into an online version and improve other digital learning tools.</dd></div>
+        <div><dt>What I did</dt><dd>Programmed an online workshop with multiplayer functions, discussion rounds, a metaphorical backpack exercise and an individual learning persona.</dd></div>
+        <div><dt>Result</dt><dd>In use since September 2026, after iterations with the team and several test rounds I organised. When UN teams ask the department for a learning product, the workshop is used to clarify what they need.</dd></div>
+        <div class="actions">
+          <a class="btn gold" href="https://helti2636.github.io/workshop-tools-demo/" target="_blank" rel="noopener">Try the demo</a>
+        </div>
+      </dl>
+    </div>
+    <div class="gallery hl-gallery" id="ny-gallery"></div>
+    <div class="tags"><span>Instructional design</span><span>Facilitation</span><span>Programming</span></div>
+  </section>
+
+  <section class="more" id="stations">
+    <h2>More stations</h2>
+    <div class="tabs" role="tablist" aria-label="More stations">
+      <button type="button" role="tab" class="st-turin" id="tab-turin" aria-controls="panel" aria-selected="true" data-tab="turin"><span class="mono">Turin · Sep–Dec 2025</span><strong>JPO playbook and book shelf</strong><span class="what">Playbook and book shelf for JPOs</span></button>
+      <button type="button" role="tab" class="st-graz" id="tab-graz" aria-controls="panel" aria-selected="false" data-tab="graz"><span class="mono">Graz · Feb–May 2025</span><strong>E-learnings</strong><span class="what">For the City of Graz</span></button>
+      <button type="button" role="tab" class="st-fh" id="tab-friedrichshafen" aria-controls="panel" aria-selected="false" data-tab="friedrichshafen"><span class="mono">Friedrichshafen · 2023–2025</span><strong>Master's thesis</strong><span class="what">Research and practice on e-learning</span></button>
+    </div>
+    <div class="panel" id="panel" role="tabpanel" tabindex="-1"></div>
+  </section>
+
+  <footer>
+    <span>robin.held@gmx.net</span>
+    <span>Workshop tool content has been generalised for demonstration.</span>
+  </footer>
+</div>
+
+<dialog id="lightbox" aria-label="Enlarged image">
+  <button type="button" class="lb-close" aria-label="Close">×</button>
+  <img alt="">
+  <p class="mono"></p>
+</dialog>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+<script>
+var STATIONS = {
+  turin: {
+    place: "Turin", meta: "Turin · UNSSC · Sep–Dec 2025", title: "JPO playbook and digital book shelf",
+    task: "Two learning products drawn from 20 years of JPO Orientation trainings at UNSSC: a playbook of tips and recommendations for the yearly JPO cohort, and a digital book shelf of recommended reading for all UNSSC staff.",
+    did: "I worked on both projects independently from start to finish, including planning, content and design.",
+    result: "The playbook is shared with every cohort that completes the JPO Orientation Programme. Two cohorts, more than 200 young professionals, have received it so far. The book shelf is offered internally as a service of my team.",
+    media: [
+      { img: "assets/turin/playbook-cover.webp", cap: "JPO playbook · cover" },
+      { img: "assets/turin/playbook-checklist.webp", cap: "JPO playbook · checklist for the first weeks" },
+      { img: "assets/turin/playbook-managing-up.webp", cap: "JPO playbook · managing up" },
+      { img: "assets/turin/bookshelf-start.webp", cap: "Digital book shelf · six categories" },
+      { img: "assets/turin/bookshelf-eq.webp", cap: "Digital book shelf · Human dynamics and EQ" },
+      { img: "assets/turin/bookshelf-un.webp", cap: "Digital book shelf · UN system" }
+    ],
+    links: [{ href: "https://view.genially.com/6909c13aade532d5d1d6d1bb", label: "Open the book shelf" }],
+    tags: ["Learning product", "Content design", "Genially"], xref: null
+  },
+  graz: {
+    place: "Graz", meta: "Graz · City of Graz administration · Feb–May 2025", title: "Two e-learnings: salary system and time management",
+    task: "Replace parts of the old onboarding process with e-learnings on typical onboarding topics.",
+    did: "Together with several teams in the city administration, I created the concept, storyboard and design of both courses. At their core are more than 90 minutes of video I produced myself.",
+    result: "In use in the City of Graz since May 2025 and completed by thousands of employees.",
+    media: [
+      { video: "assets/graz/video-promotion.mp4", poster: "assets/graz/promotion.webp", cap: "Video lesson · promotions (German, with sound)" },
+      { video: "assets/graz/video-salary.mp4", cap: "Video lesson · salary (German, with sound)" },
+      { img: "assets/graz/promotion.webp", cap: "Still · how a promotion works in the pay scheme" },
+      { img: "assets/graz/other-time-rule.webp", cap: "Still · the “other time” rule" }
+    ],
+    note: "The courses are in German, as they were made for staff of the City of Graz.",
+    tags: ["E-learning", "Instructional design", "Articulate Rise"],
+    xref: { text: "Built as the practical part of my master's thesis.", label: "See the thesis", to: "friedrichshafen" }
+  },
+  friedrichshafen: {
+    place: "Friedrichshafen", meta: "Friedrichshafen · Zeppelin University · Politics, Administration and International Relations · 2023–2025", title: "Master's thesis: Explainer videos save public administration",
+    task: "The use and benefit of e-learning in onboarding, researched in the City of Graz administration.",
+    did: "Exploratory interviews with several city administrations, then two video-based, interactive e-learnings that I planned, built, rolled out and evaluated with 70 employees.",
+    result: "Correct answers rose from 68 % to 87 % in one course and from 46 % to 87 % in the other. Employees also found the modules much more useful than the written introductions used before.",
+    media: [{ chart: true, cap: "Share of correct answers before and after the e-learning (n = 70)" }],
+    abstract: "This thesis examined the benefits of e-learning in the onboarding process using the example of the city administration of Graz. The aim was to analyse the learning success that target group-oriented and interactive e-learnings can achieve and the resources that can be saved as a result. In addition to exploratory interviews with several city administrations, two video-based interactive learning units on central onboarding topics were developed, implemented and evaluated. The results show a high level of learning success and considerable potential for relieving the burden on personnel and time resources. Finally, a practice-oriented checklist was presented that can serve as a guide for other city administrations for the successful implementation of e-learning.",
+    links: [{ href: "assets/friedrichshafen/master-thesis-robin-held.pdf", label: "Read the full thesis (PDF, German)" }],
+    tags: ["Research", "Learning design"],
+    xref: { text: "The core of the thesis is my project work for the City of Graz.", label: "See the e-learnings", to: "graz" }
+  }
+};
+
+var panel = document.getElementById("panel");
+function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+
+function showTab(id){
+  var s = STATIONS[id]; if (!s) return;
+  document.querySelectorAll(".tabs button").forEach(function(b){
+    b.setAttribute("aria-selected", b.dataset.tab === id ? "true" : "false");
+  });
+  panel.setAttribute("aria-labelledby", "tab-" + id);
+  panel.className = "panel st-" + (id === "friedrichshafen" ? "fh" : id);
+  panel.classList.remove("enter"); void panel.offsetWidth; panel.classList.add("enter");
+  panel.innerHTML =
+    '<div><p class="mono">' + esc(s.meta) + '</p><h3>' + esc(s.title) + '</h3></div>' +
+    '<dl class="facts row">' +
+      '<div><dt>Task</dt><dd>' + esc(s.task) + '</dd></div>' +
+      '<div><dt>What I did</dt><dd>' + esc(s.did) + '</dd></div>' +
+      '<div><dt>Result</dt><dd>' + esc(s.result) + '</dd></div>' +
+    '</dl>' +
+    '<div class="gallery' + (s.media.length === 1 ? ' one' : '') + '">' + s.media.map(mediaHtml).join("") + '</div>' +
+    (s.note ? '<p class="mono">' + esc(s.note) + '</p>' : '') +
+    (s.abstract ? '<details class="abstract"><summary>Abstract</summary><p>' + esc(s.abstract) + '</p></details>' : '') +
+    (s.links ? '<div class="actions">' + s.links.map(function(l){ return '<a class="btn" href="' + esc(l.href) + '" target="_blank" rel="noopener">' + esc(l.label) + '</a>'; }).join("") + '</div>' : '') +
+    (s.xref ? '<p class="xref">' + esc(s.xref.text) + ' <button type="button" data-go="' + s.xref.to + '">' + esc(s.xref.label) + '</button></p>' : '') +
+    '<div class="tags">' + s.tags.map(function(t){ return '<span>' + esc(t) + '</span>'; }).join("") + '</div>';
+}
+
+function chartHtml(){
+  var rows = [["Working time", 68, 87], ["Salary", 46, 87]];
+  var W = 440, H = 220, x0 = 36, y0 = 20, ch = 150, bw = 46;
+  var out = '<svg class="chart" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Correct answers before and after: working time 68 to 87 percent, salary 46 to 87 percent">';
+  [0, 50, 100].forEach(function(t){
+    var y = y0 + ch - ch * t / 100;
+    out += '<line x1="' + x0 + '" x2="' + (W - 10) + '" y1="' + y + '" y2="' + y + '" class="grid"/><text x="' + (x0 - 6) + '" y="' + (y + 4) + '" text-anchor="end" class="axis">' + t + '%</text>';
+  });
+  rows.forEach(function(r, i){
+    var gx = x0 + 40 + i * 200;
+    [[r[1], "before"], [r[2], "after"]].forEach(function(v, j){
+      var h = ch * v[0] / 100, x = gx + j * (bw + 10), y = y0 + ch - h;
+      out += '<rect x="' + x + '" y="' + y + '" width="' + bw + '" height="' + h + '" rx="3" class="bar ' + v[1] + '"/>' +
+        '<text x="' + (x + bw / 2) + '" y="' + (y - 6) + '" text-anchor="middle" class="val">' + v[0] + '%</text>';
+    });
+    out += '<text x="' + (gx + bw + 5) + '" y="' + (y0 + ch + 20) + '" text-anchor="middle" class="axis">' + r[0] + '</text>';
+  });
+  out += '<rect x="' + (W - 150) + '" y="' + (H - 16) + '" width="10" height="10" rx="2" class="bar before"/><text x="' + (W - 135) + '" y="' + (H - 7) + '" class="axis">Before</text>' +
+    '<rect x="' + (W - 80) + '" y="' + (H - 16) + '" width="10" height="10" rx="2" class="bar after"/><text x="' + (W - 65) + '" y="' + (H - 7) + '" class="axis">After</text></svg>';
+  return out;
+}
+
+function mediaHtml(m){
+  var body;
+  if (m.img) body = '<button type="button" class="zoom" data-zoom="' + esc(m.img) + '" data-cap="' + esc(m.cap) + '" aria-label="Enlarge: ' + esc(m.cap) + '"><img src="' + esc(m.img) + '" alt="' + esc(m.cap) + '" loading="lazy"></button>';
+  else if (m.video) body = '<video controls preload="metadata" playsinline' + (m.poster ? ' poster="' + esc(m.poster) + '"' : '') + ' src="' + esc(m.video) + '"></video>';
+  else if (m.chart) body = chartHtml();
+  return '<figure>' + body + '<figcaption>' + esc(m.cap) + '</figcaption></figure>';
+}
+
+document.getElementById("ny-gallery").innerHTML = [
+  { img: "assets/new-york/reveal.webp", cap: "Answers revealed to the group" },
+  { img: "assets/new-york/backpacks.webp", cap: "Everyone's learning backpack" },
+  { img: "assets/new-york/card.webp", cap: "The shared learner persona" },
+  { img: "assets/new-york/prioritise.webp", cap: "Prioritising learning formats" }
+].map(mediaHtml).join("");
+
+var tourEl = document.getElementById("tour");
+function fitTour(){
+  var f = tourEl.querySelector("iframe");
+  if (f) f.style.transform = "scale(" + (tourEl.clientWidth / 1280) + ")";
+}
+document.getElementById("tour-start").addEventListener("click", function(){
+  tourEl.innerHTML = '<iframe title="Workshop tools tour" src="demo/index.html?autoplay=1&theme=dark&notes=0"></iframe>';
+  fitTour();
+});
+window.addEventListener("resize", fitTour);
+
+var lb = document.getElementById("lightbox");
+document.addEventListener("click", function(e){
+  var z = e.target.closest("[data-zoom]");
+  if (z && lb.showModal) {
+    lb.querySelector("img").src = z.dataset.zoom;
+    lb.querySelector("img").alt = z.dataset.cap;
+    lb.querySelector("p").textContent = z.dataset.cap;
+    lb.showModal();
+  } else if (e.target === lb || e.target.closest(".lb-close")) lb.close();
+});
+
+function go(id){
+  var target;
+  if (id === "new-york") target = document.getElementById("new-york");
+  else { showTab(id); target = document.getElementById("stations"); }
+  if (target) target.scrollIntoView({ block: "start" });
+}
+
+document.addEventListener("click", function(e){
+  var t = e.target.closest("[data-tab]");
+  if (t) { showTab(t.dataset.tab); return; }
+  var g = e.target.closest("[data-go]");
+  if (g) go(g.dataset.go);
+});
+document.addEventListener("keydown", function(e){
+  if (e.key !== "Enter" && e.key !== " ") return;
+  var g = e.target.closest && e.target.closest("g[data-go]");
+  if (g) { e.preventDefault(); go(g.dataset.go); }
+});
+showTab("turin");
+
+var STOPS = [
+  { id: "friedrichshafen", name: "Friedrichshafen", ll: [9.48, 47.65], dx: -10, dy: -12, anchor: "end" },
+  { id: "graz", name: "Graz", ll: [15.44, 47.07], dx: 12, dy: 5, anchor: "start" },
+  { id: "turin", name: "Turin", ll: [7.69, 45.07], dx: -10, dy: 18, anchor: "end" },
+  { id: "new-york", name: "New York", ll: [-73.97, 40.75], dx: 0, dy: 28, anchor: "middle" }
+];
+var world = null;
+var svg = d3.select("#map");
+
+function draw(){
+  var W = Math.max(300, document.querySelector(".mapwrap").clientWidth);
+  var small = W < 560;
+  var H = Math.round(W * (small ? 0.62 : 0.46));
+  svg.attr("viewBox", "0 0 " + W + " " + H).selectAll("*").remove();
+
+  var proj = d3.geoMercator().fitExtent([[16, 16], [W - 16, H - 16]], { type: "MultiPoint", coordinates: [[-86, 30], [24, 58]] });
+  var path = d3.geoPath(proj);
+  if (world) {
+    svg.append("path").attr("class", "land").attr("d", path(topojson.feature(world, world.objects.land)));
+    svg.append("path").attr("class", "borders").attr("d", path(topojson.mesh(world, world.objects.countries, function(a, b){ return a !== b; })));
+  }
+
+  var pt = {}; STOPS.forEach(function(s){ pt[s.id] = proj(s.ll); });
+  var f = pt.friedrichshafen, g = pt.graz, t = pt.turin, n = pt["new-york"];
+  var lift = H * 0.3;
+  var arc = " Q" + ((t[0] + n[0]) / 2) + "," + (Math.min(t[1], n[1]) - lift) + " " + n;
+  svg.append("path").attr("class", "route").attr("d", "M" + f + " L" + g + " L" + t + arc);
+  planeLegs = ["M" + f + " L" + g, "M" + g + " L" + t, "M" + t + arc].map(function(d){
+    var el = svg.append("path").attr("d", d).attr("fill", "none").attr("stroke", "none").node();
+    return { el: el, len: el.getTotalLength() };
+  });
+  planeSpeed = W / 16;
+
+  STOPS.forEach(function(s){
+    var p = pt[s.id];
+    var el = svg.append("g").attr("class", "stop").attr("data-go", s.id).attr("tabindex", 0).attr("role", "link")
+      .attr("aria-label", s.name + ", open station");
+    el.append("circle").attr("cx", p[0]).attr("cy", p[1]).attr("r", 16).attr("fill", "transparent");
+    el.append("circle").attr("class", "dot").attr("cx", p[0]).attr("cy", p[1]).attr("r", small ? 6 : 8);
+    el.append("text").attr("x", p[0] + s.dx).attr("y", p[1] + s.dy).attr("text-anchor", s.anchor)
+      .style("font-size", small ? "11px" : null).text(s.name);
+  });
+  planeEl = svg.append("g").attr("class", "map-plane").attr("opacity", 0);
+  planeEl.append("path").attr("transform", "translate(-9,-9) scale(.75) rotate(90 12 12)")
+    .attr("d", "M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z")
+    .attr("fill", "currentColor").attr("stroke", "var(--bg)").attr("stroke-width", 1.2).attr("paint-order", "stroke");
+}
+
+/* Mini plane: Friedrichshafen > Graz > Turin > New York, short stop at each, then it vanishes and starts again. */
+var planeLegs = [], planeEl = null, planeSpeed = 60, planeT0 = null, planeAngle = 0;
+var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function planeFrame(now){
+  requestAnimationFrame(planeFrame);
+  if (!planeEl || !planeLegs.length) return;
+  if (planeT0 === null) planeT0 = now + 3200;
+  var steps = [];
+  planeLegs.forEach(function(l, i){
+    steps.push({ leg: l, dur: Math.max(1800, l.len / planeSpeed * 1000) });
+    steps.push({ stay: l, dur: i < planeLegs.length - 1 ? 700 : 1800 });
+  });
+  steps.push({ out: planeLegs[planeLegs.length - 1], dur: 500 }, { gap: true, dur: 900 });
+  var total = steps.reduce(function(a, x){ return a + x.dur; }, 0);
+  var t = now - planeT0; if (t < 0) return;
+  t = t % total;
+  var i = 0; while (t > steps[i].dur) { t -= steps[i].dur; i++; }
+  var st = steps[i], k = t / st.dur, p, op = 1;
+  if (st.leg) {
+    var e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+    var d = e * st.leg.len;
+    p = st.leg.el.getPointAtLength(d);
+    var q = st.leg.el.getPointAtLength(Math.min(st.leg.len, d + 1)), r = st.leg.el.getPointAtLength(Math.max(0, d - 1));
+    planeAngle = Math.atan2(q.y - r.y, q.x - r.x) * 180 / Math.PI;
+    if (i === 0) op = Math.min(1, t / 400);
+  } else if (st.stay || st.out) {
+    var l = st.stay || st.out; p = l.el.getPointAtLength(l.len);
+    if (st.out) op = 1 - k;
+  } else { op = 0; p = { x: 0, y: 0 }; }
+  planeEl.attr("transform", "translate(" + p.x + "," + p.y + ") rotate(" + planeAngle + ")").attr("opacity", op);
+}
+if (!reduceMotion) requestAnimationFrame(planeFrame);
+
+draw();
+var timer = null;
+window.addEventListener("resize", function(){ clearTimeout(timer); timer = setTimeout(draw, 120); });
+fetch("countries-110m.json").then(function(r){ return r.json(); }).then(function(w){ world = w; draw(); }).catch(function(){});
+</script>
