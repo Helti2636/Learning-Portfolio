@@ -227,6 +227,20 @@ figure video:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(31,28,
 .paused .tour-shield .tour-icon.pause{display:none}
 .paused .tour-shield .tour-icon.play{display:flex}
 ::view-transition-group(*){animation-duration:.45s;animation-timing-function:cubic-bezier(.4,0,.2,1)}
+
+/* Hand-drawn station icons */
+.st-icon{display:block;flex:none;pointer-events:none}
+.st-icon path{vector-effect:non-scaling-stroke}
+.line-nav button{position:relative;padding-right:56px}
+.line-nav .st-icon{position:absolute;top:50%;right:12px;width:38px;height:38px;margin-top:-19px;color:var(--ink)}
+.tabs button{padding-right:72px}
+.tabs .st-icon{position:absolute;top:50%;right:12px;width:52px;height:52px;margin-top:-24px}
+.hl-head{display:flex;align-items:center;gap:12px}
+.hl-head .st-icon{width:46px;height:46px}
+@media (prefers-reduced-motion:no-preference){
+  .line-nav button:hover .st-icon,.tabs button:hover .st-icon{animation:wiggle .5s ease-in-out}
+  @keyframes wiggle{0%,100%{transform:rotate(0)}30%{transform:rotate(-7deg)}65%{transform:rotate(5deg)}}
+}
 </style>
 
 <div class="curtain" aria-hidden="true">
@@ -255,7 +269,7 @@ figure video:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(31,28,
   </nav>
 
   <section class="hl-band" id="new-york">
-    <span class="badge">Highlight</span>
+    <div class="hl-head" id="hl-head"><span class="badge">Highlight</span></div>
     <div>
       <p class="mono">New York · UN Secretariat, Department of Operational Support · Jul–Sep 2026</p>
       <h2>Self-built online workshops and tools</h2>
@@ -598,6 +612,37 @@ function planeFrame(now){
   planeEl.attr("transform", "translate(" + p.x + "," + p.y + ") rotate(" + planeAngle + ")").attr("opacity", op);
 }
 if (!reduceMotion) requestAnimationFrame(planeFrame);
+
+/* Hand-drawn station icons: same wobbly line, marker blob in the station colour where colour is used. */
+var ICONS = {
+  friedrichshafen: { blob: "M14 34 C 18 22, 40 20, 50 27 C 54 33, 44 40, 30 40 C 20 40, 12 40, 14 34 Z", d: [
+    "M10.5 30.5 C 12 20.5, 39 16.8, 51.5 23.6 C 58.2 27.6, 57.4 34.4, 50.2 37.4 C 39.6 42.3, 14.2 41.2, 10.2 34.1 Z",
+    "M12.6 26.8 L 5.2 20.6 L 8.4 30.2", "M12.2 35.6 L 5.6 41.4 L 9.2 33.4",
+    "M21 22.4 C 22.6 29.6, 22.4 34.6, 20.4 39.6", "M34.2 19.6 C 36.2 27.4, 36 34.2, 33.6 41.6",
+    "M26.4 40.6 C 27.2 45.2, 35.4 45.4, 36.2 40.4", "M45 26 C 47 27.5, 48 29.5, 47.6 31.4"] },
+  graz: { blob: "M24 32 C 32 30, 44 36, 42 42 C 40 48, 26 50, 24 44 C 22 40, 21 34, 24 32 Z", d: [
+    "M12.4 26.4 L 51.6 24.2 L 53 52.2 L 13.2 54 Z", "M12.4 26.4 L 10.2 16.4 L 48.8 10.4 L 51.2 20.6",
+    "M18.2 15.4 L 22.4 23.6", "M28.4 13.6 L 32.6 21.8", "M38.4 12.2 L 42.2 20.4", "M28.2 33.2 L 40.4 39.4 L 28.6 46.2 Z"] },
+  turin: { blob: "M12 30 C 18 26, 30 30, 40 38 C 46 44, 30 48, 20 44 C 12 40, 8 34, 12 30 Z", d: [
+    "M8.4 13.2 L 55.6 12 L 56.4 51.6 L 7.8 52.4 Z", "M32 12.6 L 32.2 52",
+    "M32 26.4 C 37.8 26.2, 39.2 36.8, 32.2 38 C 25.6 38.6, 25.4 26.8, 32 26.4 Z",
+    "M14.6 22.4 L 19.4 27.2", "M19.2 22.6 L 14.8 27", "M44.6 40 C 47.4 39.8, 48 44, 45.2 44.6 C 42.6 45, 42 40.4, 44.6 40 Z",
+    "M18.4 31.6 C 24 38, 34 44.6, 41 42.6", "M37.6 40.4 L 41.2 42.6 L 38.2 45.4"] },
+  "new-york": { blob: "M20 40 C 26 34, 40 34, 44 40 C 46 48, 22 50, 20 40 Z", d: [
+    "M18.2 22.4 C 18.6 14.6, 45.4 14, 45.8 22 L 47.6 51.8 C 47.8 56, 16.4 56.4, 16.2 52.2 Z",
+    "M26.2 16.2 C 26.4 8.4, 37.8 8.2, 38.2 16", "M22.4 38.4 L 41.8 38 L 41.2 50.2 L 23.2 50.6 Z",
+    "M18.4 28.2 C 25.6 32.4, 38.4 32.2, 45.6 27.8", "M31.8 30.6 L 32 35.4",
+    "M39.8 18.6 L 41.2 21.4 L 44.2 21.8 L 42 23.8 L 42.6 26.8 L 39.8 25.4 L 37.2 26.8 L 37.6 23.8 L 35.4 21.8 L 38.4 21.4 Z"] }
+};
+function stationIcon(id, colored){
+  var ic = ICONS[id], s = '<svg class="st-icon" viewBox="0 0 64 64" aria-hidden="true">';
+  if (colored) s += '<path d="' + ic.blob + '" fill="var(--acc-soft)" stroke="none"/>';
+  ic.d.forEach(function(d){ s += '<path d="' + d + '" fill="none" stroke="' + (colored ? "var(--acc)" : "currentColor") + '" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>'; });
+  return s + '</svg>';
+}
+document.querySelectorAll(".line-nav button[data-go]").forEach(function(b){ b.insertAdjacentHTML("beforeend", stationIcon(b.dataset.go, false)); });
+document.querySelectorAll(".tabs button[data-tab]").forEach(function(b){ b.insertAdjacentHTML("beforeend", stationIcon(b.dataset.tab, true)); });
+document.getElementById("hl-head").insertAdjacentHTML("afterbegin", stationIcon("new-york", true));
 
 draw();
 var timer = null;
