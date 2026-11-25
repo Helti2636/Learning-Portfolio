@@ -187,7 +187,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border
 .tabs button:hover::before{transform:scaleX(.45)}
 .tabs button[aria-selected="true"]{background:var(--acc-soft);border-color:var(--acc);box-shadow:none}
 .tabs button[aria-selected="true"]::before{transform:scaleX(1)}
-.panel{border-top:4px solid var(--acc);border-color:color-mix(in srgb,var(--acc) 35%,var(--line));border-top-color:var(--acc);background:var(--surface);box-shadow:inset 0 0 80px 28px color-mix(in srgb,var(--acc) 22%,var(--surface))}
+.panel{border-top:4px solid var(--acc);border-color:color-mix(in srgb,var(--acc) 35%,var(--line));border-top-color:var(--acc);background:var(--acc-soft);box-shadow:none}
 .panel .mono{color:var(--acc)}
 .panel h3{color:var(--ink)}
 .facts.row > div,.hl-band .facts > div:not(.actions){background:var(--surface);border:1px solid color-mix(in srgb,var(--acc) 28%,transparent);border-left:4px solid var(--acc);border-radius:0 10px 10px 0;padding:12px 14px}
@@ -245,10 +245,6 @@ figure video:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(31,28,
 .tabs .st-icon{position:absolute;top:50%;right:12px;width:52px;height:52px;margin-top:-24px}
 .hl-head{display:flex;align-items:center;gap:12px}
 .hl-head .st-icon{width:46px;height:46px}
-@media (prefers-reduced-motion:no-preference){
-  .line-nav button:hover .st-icon,.tabs button:hover .st-icon{animation:wiggle .5s ease-in-out}
-  @keyframes wiggle{0%,100%{transform:rotate(0)}30%{transform:rotate(-7deg)}65%{transform:rotate(5deg)}}
-}
 </style>
 </head>
 <body>
