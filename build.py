@@ -1,6 +1,6 @@
-"""Builds the public website into /docs (served by GitHub Pages from main -> /docs).
+"""Builds the public website into /docs and index.html (GitHub Pages can serve either).
 
-index.html is the editable source. It has no <html>/<head> wrapper of its own
+portfolio.html is the editable source. It has no <html>/<head> wrapper of its own
 (the Claude preview adds one), so this script adds a proper document head and
 copies the map data, the assets and the embedded workshop demo next to it.
 
@@ -25,7 +25,7 @@ HEAD = """<!doctype html>
 
 
 def main() -> None:
-    src = (ROOT / "index.html").read_text(encoding="utf-8")
+    src = (ROOT / "portfolio.html").read_text(encoding="utf-8")
     src = src.replace('<meta name="claude:viewport-fit-sides" content="cover">\n', "")
     marker = "</style>"
     cut = src.index(marker) + len(marker)
@@ -39,7 +39,10 @@ def main() -> None:
     shutil.copy(ROOT / "countries-110m.json", OUT)
     shutil.copytree(ROOT / "assets", OUT / "assets")
     shutil.copytree(ROOT / "demo", OUT / "demo")
-    print("Built", OUT)
+    # Same page at the top level too, so GitHub Pages shows the finished site
+    # whether it serves the repository root or the /docs folder.
+    (ROOT / "index.html").write_text(page, encoding="utf-8")
+    print("Built", OUT, "and index.html")
 
 
 if __name__ == "__main__":

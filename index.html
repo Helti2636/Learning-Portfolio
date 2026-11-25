@@ -1,5 +1,13 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Learning portfolio of Robin Held: workshop tools, a JPO playbook, e-learnings and a master's thesis on e-learning.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='34' fill='%23c19a4f'/%3E%3C/svg%3E">
+<style>html,body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>Robin Held Learning Portfolio</title>
-<meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <style>
 /* Layout: one scrolling page. Off-white paper, warm near-black for the New York band and the opening curtain, gold for every station. Single light look on purpose. */
@@ -228,7 +236,8 @@ figure video:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(31,28,
 .paused .tour-shield .tour-icon.play{display:flex}
 ::view-transition-group(*){animation-duration:.45s;animation-timing-function:cubic-bezier(.4,0,.2,1)}
 </style>
-
+</head>
+<body>
 <div class="curtain" aria-hidden="true">
   <div class="curtain-half top"><div class="curtain-inner"><div class="curtain-word">Learning Portfolio</div></div></div>
   <div class="curtain-half bottom"><div class="curtain-inner"><div class="curtain-word">Robin Held</div></div></div>
@@ -604,3 +613,6 @@ var timer = null;
 window.addEventListener("resize", function(){ clearTimeout(timer); timer = setTimeout(draw, 120); });
 fetch("countries-110m.json").then(function(r){ return r.json(); }).then(function(w){ world = w; draw(); }).catch(function(){});
 </script>
+
+</body>
+</html>
